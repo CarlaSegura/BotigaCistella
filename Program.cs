@@ -27,7 +27,7 @@ class Program
 
         if (venCompr.ToLower().Equals("comprador"))
         {
-            MenuComprador(nProductes);
+            MenuComprador(nProductes, producte);
         }
         else if(venCompr.ToLower().Equals("venedor"))
         {
@@ -121,10 +121,11 @@ class Program
                 break;
         }
     }
-    static void MenuComprador(int nProductes)
+    static void MenuComprador(int nProductesBotiga, string[] producte)
     {
         string[] productesCistella = new string[0];
         int[] quantitatProductes = new int[0];
+        int nProductesCistella = 0;
 
         Console.WriteLine("1. Comprar Producte");
         Console.WriteLine("2. Ordernar Cistella");
@@ -141,12 +142,12 @@ class Program
                 Console.WriteLine("Afegeix la quantitat que vols: ");
                 int quantitat = Convert.ToInt32(Console.ReadLine());
                 Console.Clear();
-                ComprarProducte(productesCistella, quantitatProductes, producteString, quantitat);
+                ComprarProducte(productesCistella, quantitatProductes, producteString, quantitat, nProductesBotiga, producte, nProductesCistella);
                 break;
 
             case 2:
 
-                OrdernarCistella(productesCistella, quantitatProductes, nProductes);
+                OrdernarCistella(productesCistella, quantitatProductes, nProductesBotiga);
                 break;
 
             case 3:
@@ -157,13 +158,13 @@ class Program
 
                 if (onMostrar.ToLower().Equals("consola"))
                 {
-                    CistellaToString(productesCistella, quantitatProductes, nProductes);
+                    CistellaToString(productesCistella, quantitatProductes, nProductesBotiga);
                 }
                 else
                 {
                     Console.WriteLine("Has de posar consola, ja que encara no estan disponibles les de mes opcions");
                     Console.Clear();
-                    MenuComprador(nProductes);
+                    MenuComprador(nProductesBotiga, producte);
                 }
 
                 break;
@@ -186,7 +187,7 @@ class Program
         }
         else
         {
-            producte[nProductes] = producteString;
+            producte[nProductes] = producteString.ToLower();
             preu[nProductes] = preuDouble;
             nProductes++;
         }
@@ -213,6 +214,7 @@ class Program
         }
         preu = auxDouble;
 
+        Final();
     }
 
     //Fet
@@ -305,9 +307,47 @@ class Program
     }
 
     /*------------------------CISTELLA--------------------------*/
-    static void ComprarProducte(string[] producteCistella, int[] quantitatProductes, string producteString, int quantitat)
+    static void ComprarProducte(string[] producteCistella, int[] quantitatProductes, string producteString, int quantitat, int nProductes, string[] producte, int nProductesCistella)
     {
+        for(int i = 0; nProductes > i; i++)
+        {
+            if (producte[i] == producteString)
+            {
+                if (producteCistella.Length == nProductesCistella)
+                {
+                    AmpliarCistella(ref producteCistella, ref quantitatProductes);
+                }
+                producteCistella[nProductesCistella] = producteString;
+                nProductesCistella++;
+                quantitatProductes[nProductesCistella] = quantitat;
+                Console.WriteLine("Producte ficat correctament a la Cistella");
+                Console.Clear();
+            }
+            else
+            {
+                Console.WriteLine("El producte ficat no es troba dintre de la botiga");
+                ComprarProducte(producteCistella, quantitatProductes, producteString, quantitat, nProductes, producte, nProductesCistella);
+            }
+        }
+    }
 
+    //Fet
+    static void AmpliarCistella(ref string[] producteCistella, ref int[] quantitatProductes)
+    {
+        string[] auxString = new string[producteCistella.Length + 1];
+        int[] auxInt = new int[quantitatProductes.Length + 1];
+
+        for (int i = 0; i < producteCistella.Length; i++)
+        {
+            auxString[i] = producteCistella[i];
+        }
+        producteCistella = auxString;
+
+        for (int i = 0; i < quantitatProductes.Length; i++)
+        {
+            auxInt[i] = quantitatProductes[i];
+        }
+        quantitatProductes = auxInt;
     }
 
     //Fet
